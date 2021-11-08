@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from telegram.ext.callbackcontext import CallbackContext
 import os
 
-port = int(os.environ.get('PORT', 5000))
+port = int(os.environ.get('PORT', 80))
 token = os.environ["TOKEN"]
 
 logging.basicConfig(
