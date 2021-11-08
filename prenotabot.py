@@ -3,11 +3,10 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, base
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
 from bs4 import BeautifulSoup
 from telegram.ext.callbackcontext import CallbackContext
-from dotenv import dotenv_values
+import os
 
-config = dotenv_values(".env")
-token = config['token']
-port = config['port']
+port = int(os.environ.get('PORT', 5000))
+token = os.environ["TOKEN"]
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -15,16 +14,6 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 scheduler = sched.scheduler(time.time, time.sleep)
-
-updater = Updater(token=token, use_context=True)
-dispatcher = updater.dispatcher
-
-updater.start_webhook(listen="0.0.0.0",        
-                        port=int(port),                       
-                        url_path=token) 
-  
-updater.bot.setWebhook('https://prenota-bot-py.herokuapp.com/' + token) 
-
 
 class lecture:
     def __init__(self, date=None, location=None, params=None) -> None:
@@ -206,7 +195,16 @@ booking_handler = ConversationHandler(
     fallbacks=[CommandHandler('cancel', cancel)],
 )
 
-dispatcher.add_handler(booking_handler)
+def main():    
+  updater = Updater(token, use_context=True)    
+  dispatcher = updater.dispatcher  
 
-updater.start_polling()
-updater.idle()
+  dispatcher.add_handler(booking_handler)
+
+  updater.start_webhook(listen="0.0.0.0",        
+                        port=int(port),                       
+                        url_path=token) 
+  updater.bot.setWebhook('https://your-app-name.herokuapp.com/' + token) 
+  updater.idle()
+
+if __name__ == '__main__' : main()
