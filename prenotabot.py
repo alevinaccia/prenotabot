@@ -1,4 +1,3 @@
-import dotenv
 import requests , logging, time, sched                  
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update, base
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
@@ -7,6 +6,7 @@ from telegram.ext.callbackcontext import CallbackContext
 from dotenv import dotenv_values
 
 config = dotenv_values(".env")
+token = config['token']
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -14,6 +14,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 scheduler = sched.scheduler(time.time, time.sleep)
+
+updater = Updater(token=token, use_context=True)
+dispatcher = updater.dispatcher
+
+updater.start_webhook(listen="0.0.0.0",        
+                        port=int(PORT),                       
+                        url_path=token) 
+  
+updater.bot.setWebhook('https://prenota-bot-py.herokuapp.com/' + token) 
+
 
 class lecture:
     def __init__(self, date=None, location=None, params=None) -> None:
@@ -27,9 +37,6 @@ class lecture:
 def time_string_to_unix(date, time_param):
     string = date + ' ' + time_param
     return time.mktime(time.strptime(string, "%d/%m/%Y %H:%M:%S"))
-
-updater = Updater(token=config['token'], use_context=True)
-dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -108,7 +115,15 @@ for course in all_courses:
         user_courses.append(course)
     elif(course['name'].__contains__("D'Anna")):
         user_courses.append(course)
-
+    elif(course['name'].__contains__("I MC (A-L) (Kenawi")):
+        user_courses.append(course)
+    elif(course['name'].__contains__("I MC (A-L) (Alhusseini")):
+        user_courses.append(course)
+    elif(course['name'].__contains__("I-II MC/PR (Sarr")):
+        user_courses.append(course)
+    elif(course['name'].__contains__("I-II MC/PR (Sarr")):
+        user_courses.append(course)
+    
 def start_book(update: Update, context: CallbackContext):
     format_courses = []
     for course in user_courses:
