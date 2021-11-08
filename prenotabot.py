@@ -7,6 +7,7 @@ from dotenv import dotenv_values
 
 config = dotenv_values(".env")
 token = config['token']
+port = config['port']
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -19,7 +20,7 @@ updater = Updater(token=token, use_context=True)
 dispatcher = updater.dispatcher
 
 updater.start_webhook(listen="0.0.0.0",        
-                        port=int(PORT),                       
+                        port=int(port),                       
                         url_path=token) 
   
 updater.bot.setWebhook('https://prenota-bot-py.herokuapp.com/' + token) 
